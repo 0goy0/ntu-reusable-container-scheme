@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReBox @ NTU · Template A: Fresh Paper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/campus-map.css">
+<style>
+  :root {
+    --bg: #f6f2e9; --card: #fffdf7; --ink: #13241c; --muted: #5a6960; --line: #e3dccd;
+    --green: #1f7a55; --green-d: #0f4d36; --mint: #d9efe1; --sun: #f0b33c; --coral: #e0664a;
+    --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  img, svg { max-width: 100%; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 24px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 700; line-height: 1.08; letter-spacing: -.01em; margin: 0; }
+  h2 { font-size: clamp(34px, 5vw, 56px); margin-top: 10px; }
+  h3 { font-size: 22px; }
+  .kicker { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--green); }
+  .lead { font-size: clamp(17px, 1.6vw, 20px); color: var(--muted); max-width: 60ch; }
+  section { position: relative; }
+
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s ease, transform .8s cubic-bezier(.2, .8, .2, 1); transition-delay: var(--d, 0s); }
+  .reveal.is-in { opacity: 1; transform: none; }
+
+  /* Top bar */
+  .progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; background: var(--green); transform-origin: 0 50%; transform: scaleX(0); z-index: 60; }
+  .topnav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background .3s, box-shadow .3s; }
+  .topnav.solid { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+  .topnav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-weight: 700; font-size: 21px; color: var(--ink); text-decoration: none; }
+  .brand i { width: 26px; height: 20px; border-radius: 5px 5px 7px 7px; background: var(--green); position: relative; }
+  .brand i::before { content: ''; position: absolute; left: -3px; right: -3px; top: -5px; height: 6px; border-radius: 3px; background: var(--green-d); }
+  .brand small { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--muted); }
+  .navlinks { display: flex; gap: 4px; }
+  .navlinks a { font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; padding: 7px 12px; border-radius: 999px; transition: background .2s, color .2s; }
+  .navlinks a:hover { color: var(--ink); }
+  .navlinks a.on { background: var(--ink); color: var(--bg); }
+  @media (max-width: 860px) { .navlinks { display: none; } }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font-weight: 700; font-size: 15px; text-decoration: none; color: var(--ink); border: 2px solid var(--ink); transition: transform .2s, background .2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* Hero */
+  .hero { min-height: 100vh; display: flex; align-items: center; padding: 100px 0 60px; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; width: 100%; }
+  .hero h1 { font-size: clamp(46px, 7.2vw, 96px); margin: 18px 0 22px; }
+  .hero h1 em { font-style: italic; color: var(--green); }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .hero-art { position: relative; }
+  .hero-art::before { content: ''; position: absolute; inset: 6% 4% 10%; border-radius: 50%; background: radial-gradient(circle, var(--mint) 0%, transparent 68%); z-index: -1; }
+  #lid { transform-box: view-box; transform-origin: 342px 168px; }
+  .scroll-cue { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .scroll-cue::after { content: ''; display: block; width: 2px; height: 34px; margin: 8px auto 0; background: linear-gradient(var(--muted), transparent); animation: cue 1.8s ease-in-out infinite; }
+  @keyframes cue { 0%, 100% { transform: scaleY(.4); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .hero-art { max-width: 380px; margin: 0 auto; } }
+
+  /* Sticky scroll scenes */
+  .sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+
+  /* Problem */
+  .problem { height: 280vh; background: var(--card); border-block: 1px solid var(--line); }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; width: 100%; }
+  .points { list-style: none; padding: 0; margin: 30px 0 0; display: grid; gap: 18px; }
+  .points li { padding: 18px 20px; border-left: 4px solid var(--line); color: var(--muted); transition: all .45s ease; opacity: .45; }
+  .points li b { display: block; color: var(--ink); font-size: 19px; margin-bottom: 2px; }
+  .points li.on { opacity: 1; border-color: var(--coral); background: #fff; box-shadow: 0 10px 30px rgba(19, 36, 28, .06); border-radius: 0 12px 12px 0; }
+  .pile { position: relative; height: min(460px, 60vh); }
+  .pile .dispo { position: absolute; width: 84px; height: 50px; opacity: 0; transform: translateY(-160px) rotate(var(--r)); transition: transform .55s cubic-bezier(.3, 1.4, .5, 1), opacity .3s; }
+  .pile .dispo.on { opacity: 1; transform: translateY(0) rotate(var(--r)); }
+  .pile.fade .dispo { opacity: .16; filter: grayscale(1); }
+  .pile .floor { position: absolute; left: 5%; right: 5%; bottom: -8px; height: 3px; border-radius: 2px; background: var(--line); }
+  .pile .reuse { position: absolute; left: 50%; top: 18%; width: 230px; transform: translate(-50%, 40px) scale(.8); opacity: 0; transition: all .7s cubic-bezier(.2, .9, .3, 1.2); text-align: center; }
+  .pile.fade .reuse { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  .reuse p { margin: 10px 0 0; font-family: var(--serif); font-size: 22px; font-weight: 700; line-height: 1.2; }
+  @media (max-width: 860px) {
+    .problem-grid { grid-template-columns: 1fr; gap: 10px; }
+    .pile { height: 34vh; }
+    .points { margin-top: 16px; gap: 8px; }
+    .points li { padding: 10px 14px; font-size: 15px; }
+    .points li:not(.on) span { display: none; }
+  }
+
+  /* How it works */
+  .how { height: 520vh; }
+  .how-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; width: 100%; }
+  .steps { list-style: none; margin: 28px 0 0; padding: 0 0 0 26px; position: relative; display: grid; gap: 6px; }
+  .rail { position: absolute; left: 7px; top: 12px; bottom: 12px; width: 3px; background: var(--line); border-radius: 2px; }
+  .rail i { display: block; width: 100%; height: 0; background: var(--green); border-radius: 2px; }
+  .steps li { position: relative; padding: 12px 14px; border-radius: 12px; opacity: .4; transition: opacity .4s, background .4s; }
+  .steps li::before { content: ''; position: absolute; left: -25px; top: 20px; width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 3px solid var(--line); transition: all .3s; }
+  .steps li.done::before, .steps li.on::before { border-color: var(--green); background: var(--green); }
+  .steps li.on { opacity: 1; background: var(--card); box-shadow: 0 10px 30px rgba(19, 36, 28, .06); }
+  .steps h3 { font-size: 21px; display: flex; gap: 10px; align-items: baseline; }
+  .steps h3 small { font-family: var(--sans); font-size: 13px; color: var(--green); font-weight: 800; }
+  .steps p { margin: 4px 0 0; color: var(--muted); font-size: 15.5px; }
+  .stage { position: relative; aspect-ratio: 9 / 7; background: var(--card); border: 1px solid var(--line); border-radius: 28px; box-shadow: 0 30px 60px rgba(19, 36, 28, .08); overflow: hidden; }
+  .scene { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transform: scale(.94) translateY(16px); transition: opacity .5s, transform .6s cubic-bezier(.2, .9, .3, 1); }
+  .scene.on { opacity: 1; transform: none; }
+  .scene svg { width: 82%; height: auto; }
+  .stage-num { position: absolute; top: 18px; left: 22px; font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--muted); z-index: 2; }
+  .tap { animation: tap 1.6s ease-in-out infinite; }
+  @keyframes tap { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-18px); } }
+  .bob { animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .dash { stroke-dasharray: 6 8; animation: dash 1s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset: -14; } }
+  .spin { transform-box: fill-box; transform-origin: center; animation: spin 4s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 860px) {
+    .how-grid { grid-template-columns: 1fr; gap: 14px; }
+    .how-grid > div:first-child { order: 2; }
+    .stage { aspect-ratio: 16 / 10; border-radius: 20px; }
+    .steps { margin-top: 12px; }
+    .steps li:not(.on) p { display: none; }
+    .steps li { padding: 6px 12px; }
+    .steps h3 { font-size: 17px; }
+  }
+
+  /* Map */
+  .map-sec { padding: 130px 0 110px; background: var(--ink); color: #eef3ef; }
+  .map-sec .kicker { color: #8fd6ae; }
+  .map-sec .lead { color: #aebfb5; }
+  .app-frame { margin-top: 40px; border-radius: 22px; overflow: hidden; background: #fff; box-shadow: 0 40px 80px rgba(0, 0, 0, .35); }
+  .app-bar { display: flex; align-items: center; gap: 18px; padding: 10px 16px; background: #fff; color: #1d1d1f; border-bottom: 1px solid #eee; flex-wrap: wrap; }
+  .app-logo { font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .app-logo::before { content: ''; width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #1f6feb, #d71440); }
+  .app-tabs { display: flex; gap: 4px; flex: 1; overflow-x: auto; }
+  .app-tabs span { font-size: 13px; font-weight: 600; color: #777; padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
+  .app-tabs span.on { background: #eaf1ff; color: #1f6feb; }
+  .live { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #1c9b5c; }
+  .live i { width: 8px; height: 8px; border-radius: 50%; background: #1c9b5c; animation: blink 1.4s infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .map-box { height: min(640px, 78vh); min-height: 460px; font-family: var(--sans); }
+  .map-note { font-size: 14px; color: #93a69b; margin-top: 16px; }
+
+  /* Feasibility */
+  .feas { padding: 130px 0; }
+  .costs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; }
+  .cost { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+  .cost span { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .cost b { display: block; font-family: var(--serif); font-size: clamp(34px, 4vw, 48px); line-height: 1.1; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .cost small { color: var(--muted); font-size: 14px; }
+  .cost.total { background: var(--green); border-color: var(--green); color: #fff; }
+  .cost.total span, .cost.total small { color: #cfeadb; }
+  .be-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; margin-top: 16px; }
+  .chart-card, .ring-card, .mini { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+  .chart-card p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+  #be-chart { width: 100%; height: auto; margin-top: 12px; overflow: visible; }
+  #be-chart text { font-family: var(--sans); font-size: 12px; fill: var(--muted); }
+  #be-chart .grid { stroke: var(--line); }
+  #be-chart .line { fill: none; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.6s ease; }
+  #be-chart.is-in .line { stroke-dashoffset: 0; }
+  .slider { display: block; margin-top: 14px; font-size: 15px; font-weight: 600; }
+  .slider input { width: 100%; accent-color: var(--green); margin-top: 6px; }
+  .be-read { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 10px; font-size: 15px; }
+  .be-read .tag { padding: 4px 12px; border-radius: 999px; font-weight: 700; font-size: 14px; }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+  .side-stats { display: grid; gap: 16px; }
+  .ring-card { display: flex; gap: 18px; align-items: center; }
+  .ring-card svg { width: 120px; flex: none; }
+  .ring-card .ring { stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.6s ease .2s; }
+  .ring-card.is-in .ring { stroke-dashoffset: 41; }
+  .ring-card p { margin: 0; font-size: 15px; color: var(--muted); }
+  .ring-card p b { color: var(--ink); }
+  .mini b { font-family: var(--serif); font-size: 38px; line-height: 1; display: block; }
+  .mini span { color: var(--muted); font-size: 15px; }
+  .caveat { margin-top: 22px; padding: 16px 20px; border-radius: 14px; background: #fbf0d6; color: #6b5212; font-size: 15px; }
+  @media (max-width: 860px) { .costs { grid-template-columns: 1fr 1fr; } .be-grid { grid-template-columns: 1fr; } }
+
+  /* Limitations */
+  .limits { padding: 120px 0; background: var(--card); border-block: 1px solid var(--line); }
+  .limit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-top: 40px; }
+  .limit { padding: 24px; border-radius: 18px; background: var(--bg); border: 1px solid var(--line); transition: transform .3s, box-shadow .3s; }
+  .limit:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(19, 36, 28, .08); }
+  .limit .num { font-family: var(--serif); font-size: 15px; color: var(--coral); font-weight: 700; }
+  .limit h3 { font-size: 20px; margin: 8px 0 6px; }
+  .limit p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* Pilot */
+  .pilot { padding: 130px 0; }
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 50px; }
+  .timeline .track { position: absolute; left: 0; right: 0; top: 17px; height: 3px; background: var(--line); }
+  .timeline .track i { display: block; height: 100%; width: 0; background: var(--green); }
+  .tl { position: relative; padding-top: 50px; }
+  .tl::before { content: attr(data-n); position: absolute; top: 0; left: 0; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); border: 3px solid var(--line); font-weight: 800; font-size: 14px; transition: all .3s; }
+  .tl.on::before { background: var(--green); border-color: var(--green); color: #fff; }
+  .tl h3 { font-size: 20px; }
+  .tl p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 50px; }
+  .kpi { display: flex; align-items: center; gap: 12px; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; font-weight: 600; font-size: 15.5px; }
+  .kpi i { width: 34px; height: 34px; border-radius: 10px; background: var(--mint); color: var(--green-d); display: grid; place-items: center; font-style: normal; font-weight: 800; flex: none; }
+  @media (max-width: 860px) { .timeline { grid-template-columns: 1fr 1fr; } .timeline .track { display: none; } }
+
+  /* Outcomes */
+  .outcomes { padding: 120px 0 160px; background: var(--green-d); color: #fff; }
+  .outcomes .kicker { color: #8fd6ae; }
+  .big-list { list-style: none; margin: 30px 0 0; padding: 0; }
+  .big-list li { font-family: var(--serif); font-size: clamp(30px, 4.6vw, 60px); line-height: 1.12; padding: 18px 0; border-bottom: 1px solid rgba(255, 255, 255, .14); opacity: .25; transition: opacity .5s, transform .5s; transform: translateX(-10px); }
+  .big-list li.lit { opacity: 1; transform: none; }
+
+  footer { padding: 50px 0; font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; }
+  footer p { margin: 0 0 6px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .tap, .bob, .dash, .spin { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="wrap">
+    <a class="brand" href="#top"><i></i>ReBox <small>@ NTU</small></a>
+    <div class="navlinks">
+      <a href="#problem">Problem</a><a href="#how">How it works</a><a href="#map">Map</a><a href="#numbers">Numbers</a><a href="#limits">Risks</a><a href="#pilot">Pilot</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">CC0006 · Sustainability proposal</p>
+      <h1>Forgot your container? <em>Borrow one.</em></h1>
+      <p class="lead">A deposit-based reusable container system across NTU canteens. Borrow a container from the machine, return it at any participating canteen, and get your <strong>$5 deposit</strong> back.</p>
+      <div class="cta"><a class="btn btn-primary" href="#how">See how it works</a><a class="btn" href="#map">Find a return spot</a></div>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 420 380" aria-hidden="true">
+        <ellipse cx="200" cy="338" rx="150" ry="14" fill="#13241c" opacity=".08"/>
+        <g id="steam" opacity="0" stroke="#8fb5a1" stroke-width="5" stroke-linecap="round" fill="none">
+          <path d="M150 112c-12-16 12-24 0-42"/><path d="M200 100c-12-16 12-24 0-42"/><path d="M250 112c-12-16 12-24 0-42"/>
+        </g>
+        <path d="M72 180h256l-20 126a18 18 0 0 1-18 16H110a18 18 0 0 1-18-16Z" fill="#1f7a55"/>
+        <g>
+          <ellipse cx="140" cy="176" rx="46" ry="18" fill="#f5d77a"/>
+          <ellipse cx="206" cy="170" rx="40" ry="21" fill="#e98b4f"/>
+          <ellipse cx="264" cy="176" rx="44" ry="17" fill="#8cc56b"/>
+        </g>
+        <rect x="64" y="170" width="272" height="22" rx="9" fill="#0f4d36"/>
+        <g fill="none" stroke="#d9efe1" stroke-width="7" stroke-linecap="round">
+          <path d="M176 246a26 26 0 0 1 44-16"/><path d="M224 262a26 26 0 0 1-44 16"/>
+        </g>
+        <path d="M222 216l6 18-18-2z" fill="#d9efe1"/><path d="M178 292l-6-18 18 2z" fill="#d9efe1"/>
+        <g id="lid">
+          <rect x="58" y="138" width="284" height="32" rx="13" fill="#d9efe1" stroke="#0f4d36" stroke-width="3"/>
+          <rect x="168" y="120" width="64" height="22" rx="9" fill="#0f4d36"/>
+        </g>
+        <g id="utensils" opacity="0">
+          <rect x="356" y="150" width="10" height="150" rx="5" fill="#a9b4b0"/>
+          <path d="M349 150v-42M361 150v-42M373 150v-42" stroke="#a9b4b0" stroke-width="6" stroke-linecap="round"/>
+          <path d="M349 146h24" stroke="#a9b4b0" stroke-width="10" stroke-linecap="round"/>
+          <ellipse cx="394" cy="140" rx="15" ry="26" fill="#c5cdca"/>
+          <rect x="389" y="160" width="10" height="140" rx="5" fill="#c5cdca"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</header>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="sticky">
+    <div class="wrap problem-grid">
+      <div>
+        <p class="kicker">The problem</p>
+        <h2>Every takeaway ends in the bin.</h2>
+        <ol class="points" id="points">
+          <li class="on"><b>Single-use packaging piles up.</b><span>Takeaway meals generate large amounts of single-use food packaging waste.</span></li>
+          <li><b>BYOC relies on memory.</b><span>Bring-Your-Own-Container initiatives only work if students remember to bring one.</span></li>
+          <li><b>Forget it, and there's no option.</b><span>Students who forget their containers have no reusable alternative.</span></li>
+        </ol>
+      </div>
+      <div class="pile" id="pile" aria-hidden="true">
+        <div class="floor"></div>
+        <div class="reuse">
+          <svg viewBox="0 0 300 230"><path d="M30 80h240l-18 118a16 16 0 0 1-16 14H64a16 16 0 0 1-16-14Z" fill="#1f7a55"/><rect x="22" y="62" width="256" height="30" rx="12" fill="#d9efe1" stroke="#0f4d36" stroke-width="3"/><rect x="118" y="46" width="64" height="20" rx="8" fill="#0f4d36"/><g fill="none" stroke="#d9efe1" stroke-width="7" stroke-linecap="round"><path d="M126 146a24 24 0 0 1 40-15"/><path d="M174 160a24 24 0 0 1-40 15"/></g></svg>
+          <p>What if forgetting didn't mean going disposable?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="sticky">
+    <div class="wrap how-grid">
+      <div>
+        <p class="kicker">How it works</p>
+        <h2>Borrow. Eat. Return.</h2>
+        <ol class="steps" id="steps">
+          <span class="rail"><i id="rail"></i></span>
+          <li class="on"><h3><small>01</small>Borrow</h3><p>Pay a refundable <b>$5 deposit</b> and take a container and stainless-steel utensils from the machine.</p></li>
+          <li><h3><small>02</small>Order</h3><p>Pass the container to the stall owner, who packs your takeaway in it.</p></li>
+          <li><h3><small>03</small>Return</h3><p>Drop it at any participating canteen's return spot. The map shows which machines are nearby and not full.</p></li>
+          <li><h3><small>04</small>Refund</h3><p>Get your $5 back anytime, as long as the container has been returned.</p></li>
+          <li><h3><small>05</small>Wash &amp; redistribute</h3><p>Canteens clean containers in commercial dishwashers and redistribute them to other canteens.</p></li>
+        </ol>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <span class="stage-num" id="stage-num">Step 1 of 5</span>
+        <!-- 1 machine -->
+        <div class="scene on"><svg viewBox="0 0 360 280">
+          <rect x="110" y="24" width="140" height="236" rx="16" fill="#1f7a55"/>
+          <rect x="128" y="44" width="104" height="62" rx="8" fill="#d9efe1"/>
+          <text x="180" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#0f4d36">DEPOSIT</text>
+          <text x="180" y="94" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="800" fill="#0f4d36">$5.00</text>
+          <rect x="128" y="118" width="104" height="100" rx="8" fill="#0f4d36"/>
+          <g fill="#d9efe1"><rect x="140" y="128" width="80" height="16" rx="4"/><rect x="140" y="150" width="80" height="16" rx="4"/><rect x="140" y="172" width="80" height="16" rx="4"/><rect x="140" y="194" width="80" height="16" rx="4"/></g>
+          <rect x="150" y="232" width="60" height="10" rx="5" fill="#0f4d36"/>
+          <g class="tap"><rect x="268" y="120" width="62" height="40" rx="6" fill="#f0b33c"/><rect x="268" y="130" width="62" height="7" fill="#13241c" opacity=".25"/><rect x="276" y="146" width="20" height="6" rx="2" fill="#fff" opacity=".7"/></g>
+        </svg></div>
+        <!-- 2 stall -->
+        <div class="scene"><svg viewBox="0 0 360 280">
+          <rect x="60" y="72" width="240" height="100" fill="#fffdf7" stroke="#e3dccd" stroke-width="3"/>
+          <g><rect x="50" y="38" width="44" height="36" fill="#e0664a"/><rect x="94" y="38" width="44" height="36" fill="#fffdf7" stroke="#e3dccd"/><rect x="138" y="38" width="44" height="36" fill="#e0664a"/><rect x="182" y="38" width="44" height="36" fill="#fffdf7" stroke="#e3dccd"/><rect x="226" y="38" width="44" height="36" fill="#e0664a"/><rect x="270" y="38" width="40" height="36" fill="#fffdf7" stroke="#e3dccd"/></g>
+          <circle cx="180" cy="110" r="20" fill="#e9c49a"/>
+          <path d="M138 172c0-28 18-42 42-42s42 14 42 42z" fill="#f0b33c"/>
+          <rect x="50" y="170" width="260" height="76" rx="6" fill="#0f4d36"/>
+          <g class="bob"><ellipse cx="160" cy="150" rx="18" ry="8" fill="#f5d77a"/><ellipse cx="196" cy="148" rx="16" ry="9" fill="#e98b4f"/><rect x="134" y="148" width="92" height="26" rx="7" fill="#d9efe1" stroke="#0f4d36" stroke-width="3"/></g>
+          <text x="180" y="218" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#d9efe1">Chicken Rice · Stall 4</text>
+        </svg></div>
+        <!-- 3 map -->
+        <div class="scene"><svg viewBox="0 0 360 280">
+          <rect x="30" y="20" width="300" height="240" rx="16" fill="#f3f0ea"/>
+          <ellipse cx="110" cy="200" rx="60" ry="30" fill="#d5eaca"/>
+          <path d="M30 140h300M190 20v240" stroke="#fff" stroke-width="16"/>
+          <rect x="220" y="60" width="70" height="44" rx="5" fill="#fde6d0" stroke="#eab285"/>
+          <rect x="60" y="60" width="90" height="44" rx="5" fill="#e5e0d7"/>
+          <path d="M90 170L190 140 190 100 255 82" fill="none" stroke="#1f6feb" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="dash"/>
+          <circle cx="90" cy="170" r="9" fill="#1f6feb" stroke="#fff" stroke-width="3"/>
+          <g class="bob"><path d="M255 82c-3-9-15-14-15-27a15 15 0 1 1 30 0c0 13-12 18-15 27z" fill="#1c9b5c" stroke="#fff" stroke-width="2"/><circle cx="255" cy="55" r="10" fill="#fff"/><text x="255" y="59" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="800">18</text></g>
+          <rect x="210" y="190" width="104" height="40" rx="10" fill="#fff" stroke="#e3dccd"/>
+          <text x="262" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#1c9b5c">18 slots free</text>
+          <text x="262" y="222" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#5a6960">3 min walk</text>
+        </svg></div>
+        <!-- 4 refund -->
+        <div class="scene"><svg viewBox="0 0 360 280">
+          <rect x="120" y="20" width="120" height="240" rx="22" fill="#13241c"/>
+          <rect x="130" y="40" width="100" height="200" rx="12" fill="#fffdf7"/>
+          <circle cx="180" cy="100" r="30" fill="#d9efe1"/>
+          <path d="M166 100l10 10 20-22" fill="none" stroke="#1f7a55" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="180" y="156" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#5a6960">Deposit refunded</text>
+          <text x="180" y="182" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="800" fill="#1f7a55">+$5.00</text>
+          <g class="bob"><circle cx="286" cy="84" r="30" fill="#f0b33c" stroke="#c98b14" stroke-width="4"/><text x="286" y="94" text-anchor="middle" font-family="Georgia,serif" font-size="28" font-weight="700" fill="#7a5608">$</text></g>
+          <path d="M262 118c-10 14-18 20-28 22" fill="none" stroke="#f0b33c" stroke-width="4" stroke-linecap="round" class="dash"/>
+        </svg></div>
+        <!-- 5 wash -->
+        <div class="scene"><svg viewBox="0 0 360 280">
+          <rect x="40" y="40" width="160" height="200" rx="14" fill="#c9d6d0"/>
+          <rect x="40" y="40" width="160" height="34" rx="14" fill="#a9b9b1"/>
+          <circle cx="64" cy="57" r="6" fill="#1c9b5c"/><rect x="120" y="52" width="60" height="10" rx="5" fill="#fff" opacity=".7"/>
+          <circle cx="120" cy="156" r="60" fill="#b7daf3" stroke="#fff" stroke-width="6"/>
+          <g class="spin"><rect x="92" y="136" width="56" height="18" rx="5" fill="#d9efe1" stroke="#0f4d36" stroke-width="2"/><rect x="92" y="160" width="56" height="18" rx="5" fill="#d9efe1" stroke="#0f4d36" stroke-width="2"/></g>
+          <g fill="#fff" opacity=".85"><circle cx="90" cy="120" r="6"/><circle cx="150" cy="190" r="5"/><circle cx="148" cy="118" r="4"/><circle cx="96" cy="194" r="4"/></g>
+          <path d="M214 140h40" stroke="#1f7a55" stroke-width="5" stroke-linecap="round" class="dash"/>
+          <g font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#0f4d36">
+            <rect x="262" y="70" width="80" height="34" rx="9" fill="#fde6d0"/><text x="302" y="92" text-anchor="middle">Canteen 2</text>
+            <rect x="262" y="123" width="80" height="34" rx="9" fill="#fde6d0"/><text x="302" y="145" text-anchor="middle">Canteen 9</text>
+            <rect x="262" y="176" width="80" height="34" rx="9" fill="#fde6d0"/><text x="302" y="198" text-anchor="middle">Canteen 16</text>
+          </g>
+        </svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="map-sec" id="map">
+  <div class="wrap">
+    <p class="kicker reveal">Find a return spot</p>
+    <h2 class="reveal">Live machine capacity, right inside NTU OmniBus.</h2>
+    <p class="lead reveal">A mock-up of how participating canteens and machine capacity could be built into OmniBus, in the style of MazeMap. Pins show free return slots and turn amber, then red, as machines fill up. Try searching, switching floors, or finding the nearest spot with space.</p>
+    <div class="app-frame reveal">
+      <div class="app-bar">
+        <span class="app-logo">OmniBus</span>
+        <div class="app-tabs"><span>Bus arrivals</span><span class="on">Canteens · ReBox</span><span>Campus map</span></div>
+        <span class="live"><i></i>Live</span>
+      </div>
+      <div id="campus-map" class="map-box"></div>
+    </div>
+    <p class="map-note">Numbers change every few seconds to simulate students borrowing and returning. North Spine is set to full on purpose, so you can see the "return elsewhere" suggestion.</p>
+  </div>
+</section>
+
+<!-- FEASIBILITY -->
+<section class="feas" id="numbers">
+  <div class="wrap">
+    <p class="kicker reveal">Feasibility</p>
+    <h2 class="reveal">Does it add up?</h2>
+    <div class="costs">
+      <div class="cost reveal"><span>Container</span><b data-count="3" data-prefix="$" data-dec="2">$0.00</b><small>durable, reusable</small></div>
+      <div class="cost reveal" style="--d:.08s"><span>Utensils</span><b data-count="1.5" data-prefix="$" data-dec="2">$0.00</b><small>stainless steel</small></div>
+      <div class="cost reveal" style="--d:.16s"><span>Washing</span><b data-count="0.05" data-prefix="$" data-dec="2">$0.00</b><small>per wash</small></div>
+      <div class="cost total reveal" style="--d:.24s"><span>Reusable set</span><b data-count="4.5" data-prefix="$" data-dec="2">$0.00</b><small>upfront, per set</small></div>
+    </div>
+    <div class="be-grid">
+      <div class="chart-card reveal">
+        <h3>Break-even calculator</h3>
+        <p>Total cost of one reusable set (plus washing) versus buying a new $0.13 disposable set for every meal.</p>
+        <svg id="be-chart" viewBox="0 0 640 320" role="img" aria-label="Break-even chart: reusable set becomes cheaper after about 56 uses"></svg>
+        <label class="slider"><span>Number of uses: <b id="be-n">20</b></span><input type="range" id="be-range" min="1" max="120" value="20"></label>
+        <div class="be-read" id="be-read"></div>
+      </div>
+      <div class="side-stats">
+        <div class="ring-card reveal" id="ring-card">
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#e3dccd" stroke-width="12"/><circle class="ring" cx="60" cy="60" r="50" fill="none" stroke="#1f7a55" stroke-width="12" stroke-linecap="round" pathLength="100" transform="rotate(-90 60 60)"/><text x="60" y="68" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="28" font-weight="700" fill="#13241c" data-count="59" data-suffix="%">0%</text></svg>
+          <p><b>Lower climate-change impact</b> after 20 uses, compared with single-use packaging (Aggarwal, 2024).</p>
+        </div>
+        <div class="mini reveal"><b data-count="0.13" data-prefix="$" data-dec="2">$0.00</b><span>per disposable takeaway set</span></div>
+        <div class="mini reveal"><b data-count="56" data-prefix="≈">≈0</b><span>uses for a reusable set to break even</span></div>
+      </div>
+    </div>
+    <p class="caveat reveal"><b>Caveat:</b> feasibility depends on high container return rates, low loss and damage rates, the number of times each container is reused, and actual labour costs.</p>
+  </div>
+</section>
+
+<!-- LIMITATIONS -->
+<section class="limits" id="limits">
+  <div class="wrap">
+    <p class="kicker reveal">Limitations</p>
+    <h2 class="reveal">What could go wrong.</h2>
+    <div class="limit-grid">
+      <div class="limit reveal"><span class="num">01</span><h3>High initial cost</h3><p>Upfront investment in reusable containers and utensils.</p></div>
+      <div class="limit reveal" style="--d:.06s"><span class="num">02</span><h3>Low return rates</h3><p>Unreturned containers raise replacement costs and eat into the environmental benefits.</p></div>
+      <div class="limit reveal" style="--d:.12s"><span class="num">03</span><h3>More washing</h3><p>Extra water and electricity, and possibly higher manpower costs.</p></div>
+      <div class="limit reveal" style="--d:.18s"><span class="num">04</span><h3>Redistribution</h3><p>Containers need to be moved between canteens frequently.</p></div>
+      <div class="limit reveal" style="--d:.24s"><span class="num">05</span><h3>Hygiene concerns</h3><p>Users may feel containers are dirty or not cleaned properly.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PILOT -->
+<section class="pilot" id="pilot">
+  <div class="wrap">
+    <p class="kicker reveal">Implementation</p>
+    <h2 class="reveal">Start small: a pilot programme.</h2>
+    <div class="timeline" id="timeline">
+      <div class="track"><i id="tl-fill"></i></div>
+      <div class="tl" data-n="1"><h3>Launch the pilot</h3><p>Test the system at participating canteens.</p></div>
+      <div class="tl" data-n="2"><h3>Track KPIs</h3><p>Measure usage, returns, losses and costs throughout.</p></div>
+      <div class="tl" data-n="3"><h3>Survey</h3><p>Canteen users, stall owners and staff at the end of the programme.</p></div>
+      <div class="tl" data-n="4"><h3>Refine</h3><p>Modify the system based on user concerns and feedback.</p></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi reveal"><i>↗</i>Containers borrowed</div>
+      <div class="kpi reveal" style="--d:.05s"><i>↩</i>Containers returned</div>
+      <div class="kpi reveal" style="--d:.1s"><i>⟳</i>Average reuses per container</div>
+      <div class="kpi reveal" style="--d:.15s"><i>!</i>Damaged or lost containers</div>
+      <div class="kpi reveal" style="--d:.2s"><i>$</i>Actual washing &amp; replacement costs</div>
+      <div class="kpi reveal" style="--d:.25s"><i>↓</i>Reduction in takeaway containers used</div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section class="outcomes" id="outcomes">
+  <div class="wrap">
+    <p class="kicker">Expected outcomes</p>
+    <ul class="big-list" id="big-list">
+      <li>Less single-use takeaway packaging.</li>
+      <li>Reusable packaging within reach, even for those who forget.</li>
+      <li>Sustainable habits through regular borrowing and returning.</li>
+      <li>A lower environmental impact and carbon footprint from canteens.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><p><b>ReBox @ NTU</b> (working name) · CC0006 group project</p><p>Group members: to be added</p></div>
+    <div><p>Reference: Aggarwal (2024). Full citation to be added.</p><p>Map layout and machine data are illustrative.</p></div>
+  </div>
+</footer>
+
+<script src="../shared/campus-map.js"></script>
+<script>
+(function () {
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  function sectionProgress(el) {
+    const r = el.getBoundingClientRect(), total = r.height - innerHeight;
+    return total <= 0 ? 0 : clamp(-r.top / total);
+  }
+
+  // Count-up numbers + reveal on enter
+  function countUp(el) {
+    const to = +el.dataset.count, dec = +(el.dataset.dec || 0), pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+    const t0 = performance.now(), dur = 1300;
+    const f = now => {
+      const t = clamp((now - t0) / dur), e = 1 - Math.pow(1 - t, 3);
+      el.textContent = pre + (to * e).toFixed(dec) + suf;
+      if (t < 1) requestAnimationFrame(f);
+    };
+    requestAnimationFrame(f);
+  }
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('is-in');
+    if (e.target.dataset.count != null) countUp(e.target);
+    io.unobserve(e.target);
+  }), { threshold: 0.25 });
+  $$('.reveal, [data-count], #be-chart').forEach(el => io.observe(el));
+
+  // Problem: pile of disposables
+  const pile = $('#pile');
+  const rows = [6, 5, 4, 3];
+  const boxSvg = '<svg viewBox="0 0 84 50"><path d="M5 22h74l-6 24H11z" fill="#fff" stroke="#c9c2b3" stroke-width="2"/><path d="M3 22c4-12 12-17 39-17s35 5 39 17z" fill="#fbfaf6" stroke="#c9c2b3" stroke-width="2"/></svg>';
+  const boxes = [];
+  let seed = 7;
+  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  rows.forEach((n, row) => {
+    for (let i = 0; i < n; i++) {
+      const b = document.createElement('div');
+      b.className = 'dispo';
+      b.innerHTML = boxSvg;
+      b.style.left = `calc(50% + ${(i - (n - 1) / 2) * 78 - 42 + (rnd() - 0.5) * 16}px)`;
+      b.style.bottom = row * 44 + 'px';
+      b.style.setProperty('--r', ((rnd() - 0.5) * 16).toFixed(1) + 'deg');
+      pile.appendChild(b);
+      boxes.push(b);
+    }
+  });
+
+  // Break-even chart
+  const chart = $('#be-chart');
+  const X = n => 50 + n / 120 * 570, Y = v => 280 - v / 16 * 260;
+  const reuse = n => 4.5 + 0.05 * n, dispo = n => 0.13 * n;
+  const BE = 4.5 / (0.13 - 0.05);
+  let g = '';
+  for (let v = 0; v <= 16; v += 4) g += `<line class="grid" x1="50" x2="620" y1="${Y(v)}" y2="${Y(v)}"/><text x="40" y="${Y(v) + 4}" text-anchor="end">$${v}</text>`;
+  for (let n = 0; n <= 120; n += 20) g += `<text x="${X(n)}" y="302" text-anchor="middle">${n}</text>`;
+  g += `<text x="620" y="318" text-anchor="end">uses</text>`;
+  g += `<polygon points="${X(0)},${Y(reuse(0))} ${X(BE)},${Y(reuse(BE))} ${X(0)},${Y(0)}" fill="#e0664a" opacity=".08"/>`;
+  g += `<polygon points="${X(BE)},${Y(reuse(BE))} ${X(120)},${Y(dispo(120))} ${X(120)},${Y(reuse(120))}" fill="#1f7a55" opacity=".1"/>`;
+  g += `<line class="line" pathLength="1" x1="${X(0)}" y1="${Y(dispo(0))}" x2="${X(120)}" y2="${Y(dispo(120))}" stroke="#e0664a"/>`;
+  g += `<line class="line" pathLength="1" x1="${X(0)}" y1="${Y(reuse(0))}" x2="${X(120)}" y2="${Y(reuse(120))}" stroke="#1f7a55"/>`;
+  g += `<circle cx="${X(BE)}" cy="${Y(reuse(BE))}" r="7" fill="#fff" stroke="#13241c" stroke-width="3"/>`;
+  g += `<text x="${X(BE) - 12}" y="${Y(reuse(BE)) - 16}" text-anchor="end" style="font-weight:700;fill:#13241c">Break-even ≈ 56 uses</text>`;
+  g += `<text x="${X(120)}" y="${Y(dispo(120)) - 10}" text-anchor="end" style="font-weight:700;fill:#e0664a">Disposable</text>`;
+  g += `<text x="${X(120)}" y="${Y(reuse(120)) + 22}" text-anchor="end" style="font-weight:700;fill:#1f7a55">Reusable</text>`;
+  g += `<g id="be-marker"><line id="be-vline" y1="20" y2="280" stroke="#13241c" stroke-dasharray="4 4"/><circle id="be-d1" r="6" fill="#e0664a"/><circle id="be-d2" r="6" fill="#1f7a55"/></g>`;
+  chart.innerHTML = g;
+  const range = $('#be-range');
+  function updateBE() {
+    const n = +range.value, r = reuse(n), d = dispo(n);
+    $('#be-n').textContent = n;
+    $('#be-vline').setAttribute('x1', X(n)); $('#be-vline').setAttribute('x2', X(n));
+    $('#be-d1').setAttribute('cx', X(n)); $('#be-d1').setAttribute('cy', Y(d));
+    $('#be-d2').setAttribute('cx', X(n)); $('#be-d2').setAttribute('cy', Y(r));
+    const cheaper = r < d;
+    $('#be-read').innerHTML =
+      `<span><i class="legend-dot" style="background:#1f7a55"></i>Reusable: <b>$${r.toFixed(2)}</b></span>` +
+      `<span><i class="legend-dot" style="background:#e0664a"></i>Disposable: <b>$${d.toFixed(2)}</b></span>` +
+      `<span class="tag" style="background:${cheaper ? '#d9efe1' : '#fbe3db'};color:${cheaper ? '#0f4d36' : '#9b3a22'}">${cheaper ? 'Reusable cheaper by' : 'Disposable cheaper by'} $${Math.abs(d - r).toFixed(2)}</span>`;
+  }
+  range.addEventListener('input', updateBE);
+  updateBE();
+
+  // Map
+  CampusMap.create($('#campus-map'));
+
+  // Scroll-driven updates
+  const progress = $('#progress'), nav = $('#topnav');
+  const lid = $('#lid'), steam = $('#steam'), utensils = $('#utensils');
+  const points = $$('#points li'), problem = $('#problem');
+  const how = $('#how'), steps = $$('#steps li'), scenes = $$('.scene'), rail = $('#rail'), stageNum = $('#stage-num');
+  const timeline = $('#timeline'), tls = $$('.tl'), tlFill = $('#tl-fill');
+  const bigList = $$('#big-list li');
+  const navLinks = $$('.navlinks a');
+  const navTargets = navLinks.map(a => $(a.getAttribute('href')));
+
+  function update() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progress.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    nav.classList.toggle('solid', scrollY > 30);
+
+    // Hero: lid opens, steam rises, utensils slide in
+    const hp = clamp(scrollY / (innerHeight * 0.7));
+    lid.style.transform = `translate(${hp * 14}px, ${-hp * 64}px) rotate(${hp * 16}deg)`;
+    steam.setAttribute('opacity', clamp(hp * 1.6 - 0.3));
+    utensils.setAttribute('opacity', clamp(hp * 2));
+    utensils.style.transform = `translateX(${(1 - hp) * 40}px)`;
+
+    // Problem
+    const pp = sectionProgress(problem);
+    boxes.forEach((b, i) => b.classList.toggle('on', pp > 0.03 + i * (0.62 / boxes.length)));
+    pile.classList.toggle('fade', pp > 0.8);
+    const pi = pp < 0.3 ? 0 : pp < 0.58 ? 1 : 2;
+    points.forEach((li, i) => li.classList.toggle('on', i === pi));
+
+    // How it works
+    const wp = sectionProgress(how);
+    const si = Math.min(4, Math.floor(wp * 5));
+    steps.forEach((li, i) => { li.classList.toggle('on', i === si); li.classList.toggle('done', i < si); });
+    scenes.forEach((s, i) => s.classList.toggle('on', i === si));
+    rail.style.height = (wp * 100) + '%';
+    stageNum.textContent = `Step ${si + 1} of 5`;
+
+    // Pilot timeline
+    const tr = timeline.getBoundingClientRect();
+    const tp = clamp((innerHeight * 0.75 - tr.top) / (innerHeight * 0.5));
+    tlFill.style.width = (tp * 100) + '%';
+    tls.forEach((t, i) => t.classList.toggle('on', tp >= i / 3 - 0.001));
+
+    // Outcomes: light up the line nearest the middle of the screen
+    bigList.forEach(li => {
+      const r = li.getBoundingClientRect(), c = r.top + r.height / 2;
+      li.classList.toggle('lit', Math.abs(c - innerHeight / 2) < innerHeight * 0.22);
+    });
+
+    // Active nav link
+    let active = -1;
+    navTargets.forEach((t, i) => { if (t && t.getBoundingClientRect().top < innerHeight * 0.4) active = i; });
+    navLinks.forEach((a, i) => a.classList.toggle('on', i === active));
+  }
+  let ticking = false;
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; update(); });
+  }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+</script>
+</body>
+</html>

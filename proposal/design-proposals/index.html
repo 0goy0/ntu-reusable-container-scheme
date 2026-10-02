@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReBox · Design proposals</title>
+<style>
+  :root { --bg: #f4f1ea; --ink: #16211c; --muted: #5f6b65; --line: #e0d9cb; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 60px 24px; }
+  main { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: clamp(30px, 4vw, 44px); margin: 0 0 8px; letter-spacing: -.02em; }
+  p.sub { color: var(--muted); margin: 0 0 40px; max-width: 64ch; font-size: 17px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  a.card { display: block; text-decoration: none; color: inherit; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: #fff; transition: transform .25s, box-shadow .25s; }
+  a.card:hover { transform: translateY(-4px); box-shadow: 0 24px 50px rgba(0, 0, 0, .1); }
+  .swatch { height: 220px; padding: 28px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .a .swatch { background: #f6f2e9; border-bottom: 1px solid var(--line); }
+  .a .swatch b { font-family: Georgia, serif; font-size: 40px; line-height: 1; color: #13241c; }
+  .a .swatch b em { color: #1f7a55; }
+  .b .swatch { background: #0a0f0d; }
+  .b .swatch b { font-size: 44px; line-height: .9; color: #ecf4ee; letter-spacing: -.04em; }
+  .b .swatch b span { color: #c6f24e; }
+  .chips { display: flex; gap: 6px; margin-top: 14px; }
+  .chips i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); }
+  .body { padding: 22px 24px 26px; }
+  .body h2 { margin: 0 0 6px; font-size: 21px; }
+  .body p { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
+  .body ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14.5px; }
+  .open { display: inline-block; margin-top: 16px; font-weight: 700; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ReBox @ NTU: two design directions</h1>
+  <p class="sub">Both templates cover the full proposal as a scroll story and share the same MazeMap-style campus map. Open each one, scroll through it, and try the map.</p>
+  <div class="grid">
+    <a class="card a" href="template-a-fresh/index.html">
+      <div class="swatch"><b>Forgot your container? <em>Borrow one.</em></b>
+        <div class="chips"><i style="background:#f6f2e9"></i><i style="background:#1f7a55"></i><i style="background:#0f4d36"></i><i style="background:#f0b33c"></i><i style="background:#e0664a"></i></div></div>
+      <div class="body">
+        <h2>A · Fresh Paper</h2>
+        <p>Light, editorial and friendly. Serif headlines on warm paper, with an eco-green palette.</p>
+        <ul>
+          <li>Container lid opens as you scroll the hero</li>
+          <li>Disposables pile up, then a reusable box replaces them</li>
+          <li>Pinned five-step "how it works" with illustrated scenes</li>
+          <li>Full-width OmniBus map frame, desktop layout</li>
+          <li>Break-even calculator and 59% impact ring</li>
+        </ul>
+        <span class="open">Open template A →</span>
+      </div>
+    </a>
+    <a class="card b" href="template-b-night/index.html">
+      <div class="swatch"><b>BORROW.<br><span>EAT.</span><br>RETURN.</b>
+        <div class="chips"><i style="background:#0a0f0d"></i><i style="background:#17211c"></i><i style="background:#c6f24e"></i><i style="background:#ff7a59"></i><i style="background:#ffbf3c"></i></div></div>
+      <div class="body">
+        <h2>B · Night Loop</h2>
+        <p>Dark, bold and immersive. Giant type and lime accents, built around a product demo.</p>
+        <ul>
+          <li>Hero type slides apart as you scroll</li>
+          <li>Horizontal-scrolling problem cards</li>
+          <li>Loop ring that fills step by step as you scroll</li>
+          <li>Phone mock-up of OmniBus you can actually use: borrow, hand to the stall, return, refund</li>
+          <li>Break-even lines that draw as you scroll</li>
+        </ul>
+        <span class="open">Open template B →</span>
+      </div>
+    </a>
+  </div>
+</main>
+</body>
+</html>

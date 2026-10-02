@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReBox @ NTU · Template B: Night Loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/campus-map.css">
+<style>
+  :root {
+    --bg: #0a0f0d; --bg2: #111915; --bg3: #17211c; --ink: #ecf4ee; --muted: #8a9d93; --line: rgba(236, 244, 238, .1);
+    --lime: #c6f24e; --teal: #35d0a5; --coral: #ff7a59; --amber: #ffbf3c;
+    --display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  svg { max-width: 100%; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-inline: 24px; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1; letter-spacing: -.02em; margin: 0; }
+  h2 { font-size: clamp(38px, 6vw, 76px); }
+  .tag { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--lime); }
+  .tag::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px var(--lime); }
+  .muted { color: var(--muted); }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .9s ease, transform .9s cubic-bezier(.2, .8, .2, 1); transition-delay: var(--d, 0s); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  .sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+
+  /* Nav */
+  .bar { position: fixed; inset: 0 0 auto 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; mix-blend-mode: difference; }
+  .logo { font-family: var(--display); font-weight: 700; font-size: 22px; color: #fff; text-decoration: none; letter-spacing: -.02em; }
+  .logo span { color: var(--lime); }
+  .bar nav { display: flex; gap: 22px; }
+  .bar nav a { color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; opacity: .8; }
+  .bar nav a:hover { opacity: 1; }
+  .meter { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); width: 3px; height: 160px; background: var(--line); border-radius: 2px; z-index: 50; }
+  .meter i { display: block; width: 100%; height: 0; background: var(--lime); border-radius: 2px; box-shadow: 0 0 10px var(--lime); }
+  @media (max-width: 760px) { .bar nav { display: none; } .meter { display: none; } }
+
+  /* Hero */
+  .hero { height: 100vh; min-height: 640px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+  .hero::before { content: ''; position: absolute; width: 70vmax; height: 70vmax; left: 50%; top: 55%; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(198, 242, 78, .14), transparent 60%); pointer-events: none; }
+  .ring-bg { position: absolute; width: min(78vh, 90vw); right: -8vw; top: 50%; transform: translateY(-50%); opacity: .5; pointer-events: none; }
+  .big { font-family: var(--display); font-weight: 700; font-size: clamp(64px, 14vw, 220px); line-height: .86; letter-spacing: -.05em; white-space: nowrap; will-change: transform; }
+  .big.outline { color: transparent; -webkit-text-stroke: 2px var(--lime); }
+  .big.lime { color: var(--lime); }
+  .hero-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-top: 40px; }
+  .hero-foot p { max-width: 46ch; margin: 0; color: var(--muted); font-size: 18px; }
+  .hero-foot p b { color: var(--ink); }
+  .pill { display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px; border-radius: 999px; background: var(--lime); color: #0a0f0d; font-weight: 800; text-decoration: none; transition: transform .2s, box-shadow .2s; }
+  .pill:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(198, 242, 78, .3); }
+  .pill.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+
+  /* Problem: horizontal scroll */
+  .hscroll { height: 340vh; }
+  .hscroll .sticky { display: flex; align-items: center; }
+  .track { display: flex; gap: 28px; padding-left: max(24px, calc((100vw - 1240px) / 2 + 24px)); will-change: transform; }
+  .hcard { flex: none; width: min(78vw, 560px); height: min(68vh, 520px); border-radius: 28px; padding: 36px; background: var(--bg2); border: 1px solid var(--line); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .hcard.intro { background: transparent; border: 0; padding-left: 0; justify-content: center; }
+  .hcard .n { font-family: var(--display); font-size: 110px; font-weight: 700; line-height: .8; color: transparent; -webkit-text-stroke: 1.5px rgba(236, 244, 238, .2); }
+  .hcard h3 { font-size: clamp(28px, 3vw, 40px); margin-bottom: 12px; }
+  .hcard p { margin: 0; color: var(--muted); font-size: 18px; }
+  .hcard svg.ico { position: absolute; right: 30px; top: 30px; width: 130px; opacity: .9; }
+  .hcard.accent { background: var(--lime); color: #0a0f0d; }
+  .hcard.accent p { color: #2c3a14; }
+  .hcard.accent .n { -webkit-text-stroke-color: rgba(10, 15, 13, .25); }
+
+  /* The loop */
+  .loop { height: 520vh; }
+  .loop .sticky { display: flex; align-items: center; }
+  .loop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; width: 100%; }
+  .loop-svg { width: 100%; max-width: 560px; overflow: visible; }
+  .loop-svg .node circle { fill: var(--bg2); stroke: rgba(236, 244, 238, .2); stroke-width: 2; transition: all .4s; }
+  .loop-svg .node text { fill: var(--muted); font-family: var(--display); font-weight: 700; transition: fill .4s; }
+  .loop-svg .node.on circle { fill: var(--lime); stroke: var(--lime); }
+  .loop-svg .node.on text.num { fill: #0a0f0d; }
+  .loop-svg .node.on text.lbl { fill: var(--ink); }
+  .loop-copy { position: relative; min-height: 340px; }
+  .loop-step { position: absolute; inset: 0; opacity: 0; transform: translateY(24px); transition: opacity .45s, transform .5s cubic-bezier(.2, .9, .3, 1); pointer-events: none; }
+  .loop-step.on { opacity: 1; transform: none; pointer-events: auto; }
+  .loop-step .n { font-family: var(--display); font-size: 120px; font-weight: 700; line-height: .85; color: var(--lime); }
+  .loop-step h3 { font-size: clamp(36px, 4.4vw, 60px); margin: 18px 0 14px; }
+  .loop-step p { margin: 0; font-size: 20px; color: var(--muted); max-width: 30ch; }
+  .loop-step p b { color: var(--ink); }
+  @media (max-width: 860px) {
+    .loop-grid { grid-template-columns: 1fr; gap: 0; }
+    .loop-svg { max-width: 330px; margin: 0 auto; display: block; }
+    .loop-copy { min-height: 230px; }
+    .loop-step .n { font-size: 60px; }
+    .loop-step h3 { margin: 8px 0; }
+    .loop-step p { font-size: 17px; }
+  }
+
+  /* Demo */
+  .demo { padding: 140px 0; background: linear-gradient(180deg, var(--bg), var(--bg2) 30%, var(--bg2) 70%, var(--bg)); }
+  .demo-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 50px; }
+  .demo-head p { max-width: 50ch; margin: 0; color: var(--muted); }
+  .demo-grid { display: grid; grid-template-columns: auto 1fr; gap: 50px; align-items: start; }
+  .phone { width: 360px; height: 740px; border-radius: 48px; background: #050807; padding: 12px; box-shadow: 0 0 0 2px #26332c, 0 50px 100px rgba(0, 0, 0, .6), 0 0 80px rgba(198, 242, 78, .08); position: relative; }
+  .screen { width: 100%; height: 100%; border-radius: 38px; overflow: hidden; background: #0f1613; display: flex; flex-direction: column; }
+  .status { display: flex; justify-content: space-between; padding: 12px 24px 6px; font-size: 13px; font-weight: 700; }
+  .notch { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 100px; height: 26px; border-radius: 20px; background: #050807; z-index: 5; }
+  .app-top { padding: 8px 16px 10px; }
+  .app-top h4 { margin: 0; font-family: var(--display); font-size: 22px; display: flex; align-items: center; gap: 8px; }
+  .app-top h4 i { width: 22px; height: 22px; border-radius: 7px; background: linear-gradient(135deg, #1f6feb, #d71440); }
+  .seg { display: flex; margin-top: 10px; background: #1a241f; border-radius: 10px; padding: 3px; }
+  .seg span { flex: 1; text-align: center; font-size: 13px; font-weight: 700; padding: 7px 0; border-radius: 8px; color: var(--muted); }
+  .seg span.on { background: var(--lime); color: #0a0f0d; }
+  #phone-map { flex: 1; font-family: var(--sans); }
+  #phone-map.cmap {
+    --map-land: #141d19; --map-green: #1b3024; --map-green-label: #79b58d; --map-water: #16304a;
+    --map-road: #2b3a33; --map-road-case: #1f2a25; --map-bldg: #222d28; --map-bldg-stroke: #33443b;
+    --map-canteen: #3a3322; --map-canteen-stroke: #8a7440; --map-label: #b7c6be; --map-halo: #141d19;
+    --map-accent: #c6f24e; --map-accent-fg: #0a0f0d; --map-route: #c6f24e; --map-route-case: #0a0f0d;
+    --map-ok: #2fc78e; --map-warn: #ffbf3c; --map-full: #ff5f4a;
+    --map-panel: #18221d; --map-panel-fg: #ecf4ee; --map-muted: #8a9d93; --map-line: #27342d;
+    --map-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+  }
+  .home-ind { height: 22px; display: grid; place-items: center; background: #0f1613; }
+  .home-ind::after { content: ''; width: 120px; height: 5px; border-radius: 3px; background: #3a4a42; }
+
+  .wallet { background: var(--bg3); border: 1px solid var(--line); border-radius: 28px; padding: 30px; }
+  .w-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .w-top small { display: block; font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .w-held { font-family: var(--display); font-size: 64px; font-weight: 700; line-height: 1; margin-top: 6px; transition: color .3s; }
+  .w-held.held { color: var(--amber); }
+  .w-badge { padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #22302a; color: var(--muted); }
+  .w-badge.active { background: rgba(255, 191, 60, .15); color: var(--amber); }
+  .w-badge.done { background: rgba(198, 242, 78, .15); color: var(--lime); }
+  .w-msg { margin: 20px 0 0; font-size: 17px; }
+  .w-steps { list-style: none; padding: 0; margin: 26px 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .w-steps li { position: relative; padding-top: 16px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .w-steps li::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; border-radius: 3px; background: #26332c; transition: background .4s, box-shadow .4s; }
+  .w-steps li.done { color: var(--ink); }
+  .w-steps li.done::before { background: var(--lime); box-shadow: 0 0 10px rgba(198, 242, 78, .5); }
+  .w-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .w-actions button { padding: 12px 18px; border-radius: 12px; border: 1px solid var(--line); background: #1c2722; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .2s; }
+  .w-actions button:hover:not(:disabled) { background: #26352e; }
+  .w-actions button.primary { background: var(--lime); border-color: var(--lime); color: #0a0f0d; }
+  .w-actions button:disabled { opacity: .4; cursor: default; }
+  .w-log { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 18px; max-height: 230px; overflow: auto; }
+  .w-log h5 { margin: 0 0 10px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .w-log ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .w-log li { display: flex; gap: 12px; font-size: 14.5px; animation: logIn .4s ease; }
+  .w-log time { color: var(--muted); font-variant-numeric: tabular-nums; flex: none; }
+  .w-log .plus { color: var(--lime); font-weight: 700; }
+  .w-log .minus { color: var(--amber); font-weight: 700; }
+  @keyframes logIn { from { opacity: 0; transform: translateX(-8px); } }
+  .w-hint { margin-top: 18px; font-size: 14px; color: var(--muted); }
+  @media (max-width: 960px) { .demo-grid { grid-template-columns: 1fr; justify-items: center; } .wallet { width: 100%; } }
+  @media (max-width: 420px) { .phone { width: 100%; height: 680px; } .w-steps { grid-template-columns: repeat(3, 1fr); } }
+
+  /* Numbers */
+  .numbers { padding: 140px 0; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); margin-top: 50px; }
+  .stat { padding: 30px 24px 30px 0; border-right: 1px solid var(--line); }
+  .stat:last-child { border-right: 0; }
+  .stat:not(:first-child) { padding-left: 24px; }
+  .stat b { display: block; font-family: var(--display); font-size: clamp(46px, 6vw, 88px); line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .stat:nth-child(1) b { color: var(--lime); }
+  .stat span { display: block; margin-top: 12px; color: var(--muted); font-size: 15px; max-width: 22ch; }
+  @media (max-width: 860px) { .stats { grid-template-columns: 1fr 1fr; } .stat { padding: 24px 12px !important; border-bottom: 1px solid var(--line); } .stat:nth-child(2) { border-right: 0; } }
+  .chart-wrap { margin-top: 50px; background: var(--bg2); border: 1px solid var(--line); border-radius: 28px; padding: 30px; }
+  .chart-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; align-items: flex-end; }
+  .chart-top h3 { font-size: 30px; }
+  .chart-top p { margin: 6px 0 0; color: var(--muted); max-width: 52ch; font-size: 15.5px; }
+  .readout { display: flex; gap: 24px; font-size: 15px; }
+  .readout b { display: block; font-family: var(--display); font-size: 30px; }
+  #chart { width: 100%; height: auto; margin-top: 20px; overflow: visible; }
+  #chart text { font-family: var(--sans); font-size: 12px; fill: var(--muted); }
+  #chart .grid { stroke: rgba(236, 244, 238, .08); }
+  .range { width: 100%; accent-color: var(--lime); margin-top: 10px; }
+  .caveat { margin-top: 20px; font-size: 15px; color: var(--muted); border-left: 3px solid var(--amber); padding-left: 14px; }
+
+  /* Risks + pilot */
+  .reality { padding: 120px 0; border-top: 1px solid var(--line); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 50px; }
+  .risks { list-style: none; margin: 0; padding: 0; }
+  .risks li { display: grid; grid-template-columns: 54px 1fr; gap: 8px 0; padding: 20px 0; border-bottom: 1px solid var(--line); transition: padding .3s, background .3s; }
+  .risks li:hover { padding-left: 14px; background: linear-gradient(90deg, rgba(255, 122, 89, .08), transparent); }
+  .risks li span { font-family: var(--display); color: var(--coral); font-weight: 700; }
+  .risks li b { font-size: 19px; font-family: var(--display); }
+  .risks li p { grid-column: 2; margin: 0; color: var(--muted); font-size: 15.5px; }
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .kpi { background: var(--bg2); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+  .kpi small { display: block; color: var(--muted); font-size: 13px; font-weight: 600; min-height: 36px; }
+  .kpi b { display: block; font-family: var(--display); font-size: 34px; margin-top: 4px; color: #3b4a43; }
+  .kpi svg { width: 100%; height: 30px; margin-top: 6px; }
+  .kpi svg path { fill: none; stroke: #33443b; stroke-width: 2; stroke-dasharray: 4 5; }
+  .pilot-steps { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }
+  .pilot-steps li { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; font-weight: 600; }
+  .pilot-steps li:first-child { background: var(--lime); color: #0a0f0d; border-color: var(--lime); }
+  .survey { margin-top: 14px; padding: 16px 18px; border-radius: 16px; border: 1px dashed rgba(236, 244, 238, .2); font-size: 15px; color: var(--muted); }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+
+  /* Outcomes marquee */
+  .outcomes { padding: 120px 0 80px; overflow: hidden; border-top: 1px solid var(--line); }
+  .marquee { white-space: nowrap; font-family: var(--display); font-weight: 700; font-size: clamp(44px, 8vw, 120px); letter-spacing: -.04em; line-height: 1.05; will-change: transform; }
+  .marquee span { margin-right: .5em; }
+  .marquee .o { color: transparent; -webkit-text-stroke: 1.5px var(--lime); }
+  .marquee .dot { color: var(--lime); }
+  footer { padding: 60px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; }
+  footer p { margin: 0 0 6px; }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="logo" href="#top">ReBox<span>.</span></a>
+  <nav><a href="#problem">Problem</a><a href="#loop">The loop</a><a href="#demo">Try it</a><a href="#numbers">Numbers</a><a href="#reality">Pilot</a></nav>
+</div>
+<div class="meter"><i id="meter"></i></div>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <svg class="ring-bg" id="ring-bg" viewBox="0 0 400 400" aria-hidden="true">
+    <circle cx="200" cy="200" r="180" fill="none" stroke="rgba(198,242,78,.35)" stroke-width="1.5" stroke-dasharray="2 10"/>
+    <circle cx="200" cy="200" r="140" fill="none" stroke="rgba(236,244,238,.12)" stroke-width="1"/>
+    <circle cx="200" cy="20" r="8" fill="#c6f24e"/>
+    <circle cx="340" cy="200" r="5" fill="#35d0a5"/>
+  </svg>
+  <div class="wrap" style="position:relative">
+    <p class="tag">CC0006 · NTU canteens</p>
+    <div class="big" data-x="-0.35">BORROW.</div>
+    <div class="big lime" data-x="0.25" style="padding-left:8vw">EAT.</div>
+    <div class="big outline" data-x="-0.18">RETURN.</div>
+    <div class="hero-foot">
+      <p>Forgot your container? <b>Borrow a reusable one</b> for a $5 refundable deposit, and return it to any participating canteen.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="pill" href="#demo">Try the demo →</a><a class="pill ghost" href="#loop">How it works</a></div>
+    </div>
+  </div>
+</header>
+
+<!-- PROBLEM (horizontal) -->
+<section class="hscroll" id="problem">
+  <div class="sticky">
+    <div class="track" id="track">
+      <div class="hcard intro">
+        <p class="tag">The problem</p>
+        <h2 style="margin-top:18px">Convenience<br>has a cost.</h2>
+        <p class="muted" style="margin-top:20px;font-size:18px">Keep scrolling →</p>
+      </div>
+      <div class="hcard">
+        <svg class="ico" viewBox="0 0 120 120" aria-hidden="true"><path d="M20 52h80l-8 44H28z" fill="none" stroke="#ecf4ee" stroke-width="3"/><path d="M16 52c6-18 18-24 44-24s38 6 44 24z" fill="none" stroke="#ecf4ee" stroke-width="3"/><path d="M36 20l10 10M84 20l-10 10M60 10v14" stroke="#ff7a59" stroke-width="3" stroke-linecap="round"/></svg>
+        <span class="n">01</span>
+        <div><h3>Single-use, every meal.</h3><p>Takeaway meals generate large amounts of single-use food packaging waste.</p></div>
+      </div>
+      <div class="hcard">
+        <svg class="ico" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="54" r="34" fill="none" stroke="#ecf4ee" stroke-width="3"/><path d="M48 44a12 12 0 1 1 16 11c-3 1-4 4-4 7v3" fill="none" stroke="#ffbf3c" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="74" r="2.5" fill="#ffbf3c"/></svg>
+        <span class="n">02</span>
+        <div><h3>BYOC runs on memory.</h3><p>Existing Bring-Your-Own-Container initiatives depend on students remembering to bring their own.</p></div>
+      </div>
+      <div class="hcard accent">
+        <svg class="ico" viewBox="0 0 120 120" aria-hidden="true"><rect x="22" y="40" width="76" height="52" rx="8" fill="none" stroke="#0a0f0d" stroke-width="3" stroke-dasharray="6 6"/><path d="M40 22l40 40M80 22L40 62" stroke="#0a0f0d" stroke-width="4" stroke-linecap="round" transform="translate(0 20)"/></svg>
+        <span class="n">03</span>
+        <div><h3>Forget it, no plan B.</h3><p>Students who forget their containers have no alternative for reusable packaging. That's the gap ReBox fills.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE LOOP -->
+<section class="loop" id="loop">
+  <div class="sticky">
+    <div class="wrap loop-grid">
+      <svg class="loop-svg" viewBox="0 0 520 520" id="loop-svg" aria-hidden="true"></svg>
+      <div>
+        <p class="tag">How it works</p>
+        <div class="loop-copy" id="loop-copy">
+          <div class="loop-step on"><div class="n">01</div><h3>Borrow</h3><p>Pay a refundable <b>$5 deposit</b> and take a container and stainless-steel utensils from the machine.</p></div>
+          <div class="loop-step"><div class="n">02</div><h3>Order</h3><p>Pass the container to the <b>stall owner</b>, who packs your takeaway in it.</p></div>
+          <div class="loop-step"><div class="n">03</div><h3>Return</h3><p>Drop it at <b>any participating canteen</b> whose machine isn't full. OmniBus shows you where.</p></div>
+          <div class="loop-step"><div class="n">04</div><h3>Refund</h3><p>Get your <b>$5 back</b> anytime, as long as the container is returned.</p></div>
+          <div class="loop-step"><div class="n">05</div><h3>Wash &amp; move</h3><p>Canteens clean containers in <b>commercial dishwashers</b> and redistribute them to other canteens.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo" id="demo">
+  <div class="wrap">
+    <div class="demo-head">
+      <div><p class="tag reveal">Try it</p><h2 class="reveal" style="margin-top:14px">ReBox, inside OmniBus.</h2></div>
+      <p class="reveal">A working mock-up of a MazeMap-style canteen map inside the NTU OmniBus app. Tap a pin to borrow a container, then return it anywhere with space. Capacity updates live.</p>
+    </div>
+    <div class="demo-grid">
+      <div class="phone reveal">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span id="clock">9:41</span><span>●●● 5G</span></div>
+          <div class="app-top">
+            <h4><i></i>OmniBus</h4>
+            <div class="seg"><span>Buses</span><span class="on">Canteens</span><span>Shuttle</span></div>
+          </div>
+          <div id="phone-map"></div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <div class="wallet reveal" style="--d:.1s">
+        <div class="w-top">
+          <div><small>Deposit held</small><div class="w-held" id="w-held">$0.00</div></div>
+          <span class="w-badge" id="w-badge">No container</span>
+        </div>
+        <p class="w-msg" id="w-msg">Tap any canteen pin on the map, then press <b>Borrow here</b>.</p>
+        <ol class="w-steps" id="w-steps">
+          <li>Borrow</li><li>Hand to stall</li><li>Return</li><li>Refund</li><li>Wash &amp; move</li>
+        </ol>
+        <div class="w-actions">
+          <button id="w-hand" class="primary" disabled>Hand container to stall</button>
+          <button id="w-near">Nearest return spot</button>
+          <button id="w-reset">Reset demo</button>
+        </div>
+        <div class="w-log"><h5>Activity</h5><ol id="w-log"><li><time>--:--</time><span class="muted">Nothing yet.</span></li></ol></div>
+        <p class="w-hint">Tip: North Spine is full on purpose. Try returning there to see the "return elsewhere" suggestion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers" id="numbers">
+  <div class="wrap">
+    <p class="tag reveal">Feasibility</p>
+    <h2 class="reveal" style="margin-top:14px">The maths of a box.</h2>
+    <div class="stats">
+      <div class="stat reveal"><b data-count="4.5" data-prefix="$" data-dec="2">$0.00</b><span>per reusable set: $3 container + $1.50 utensils</span></div>
+      <div class="stat reveal" style="--d:.08s"><b data-count="0.13" data-prefix="$" data-dec="2">$0.00</b><span>per disposable takeaway set</span></div>
+      <div class="stat reveal" style="--d:.16s"><b data-count="56" data-prefix="~">~0</b><span>uses to break even, including $0.05 per wash</span></div>
+      <div class="stat reveal" style="--d:.24s"><b data-count="59" data-suffix="%">0%</b><span>lower climate-change impact after 20 uses (Aggarwal, 2024)</span></div>
+    </div>
+    <div class="chart-wrap reveal">
+      <div class="chart-top">
+        <div><h3>Break-even</h3><p>Scroll to draw the lines, then drag the slider. Reusable = $4.50 + $0.05 per wash. Disposable = $0.13 per meal.</p></div>
+        <div class="readout"><div><span class="muted">Uses</span><b id="r-n">20</b></div><div><span class="muted">Reusable</span><b id="r-r" style="color:var(--lime)">$5.50</b></div><div><span class="muted">Disposable</span><b id="r-d" style="color:var(--coral)">$2.60</b></div></div>
+      </div>
+      <svg id="chart" viewBox="0 0 640 320" role="img" aria-label="Break-even chart: reusable set becomes cheaper after about 56 uses"></svg>
+      <input class="range" id="range" type="range" min="1" max="120" value="20" aria-label="Number of uses">
+      <p class="caveat">Feasibility depends on high container return rates, low loss and damage rates, the number of times containers are reused, and actual labour costs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LIMITATIONS + PILOT -->
+<section class="reality" id="reality">
+  <div class="wrap">
+    <p class="tag reveal">Reality check</p>
+    <h2 class="reveal" style="margin-top:14px">Risks, and how we'll test.</h2>
+    <div class="two">
+      <div>
+        <h3 class="reveal" style="font-size:26px;margin-bottom:10px">Limitations</h3>
+        <ul class="risks">
+          <li class="reveal"><span>01</span><b>High initial cost</b><p>Upfront investment in reusable containers and utensils.</p></li>
+          <li class="reveal"><span>02</span><b>Low return rates</b><p>Higher replacement costs that eat into the environmental benefits.</p></li>
+          <li class="reveal"><span>03</span><b>More washing</b><p>More water and electricity, and possibly higher manpower costs.</p></li>
+          <li class="reveal"><span>04</span><b>Redistribution</b><p>Containers need to be redistributed between canteens frequently.</p></li>
+          <li class="reveal"><span>05</span><b>Hygiene perception</b><p>Users may feel containers are dirty or not cleaned properly.</p></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="reveal" style="font-size:26px;margin-bottom:16px">Pilot programme</h3>
+        <ul class="pilot-steps reveal"><li>Pilot</li><li>Track KPIs</li><li>Survey</li><li>Modify &amp; scale</li></ul>
+        <div class="dash-grid">
+          <div class="kpi reveal"><small>Containers borrowed</small><b>—</b><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0 25L20 20 40 22 60 12 80 14 100 5"/></svg></div>
+          <div class="kpi reveal"><small>Containers returned</small><b>—</b><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0 26L20 22 40 18 60 16 80 10 100 8"/></svg></div>
+          <div class="kpi reveal"><small>Average reuses per container</small><b>—</b><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0 28L25 22 50 15 75 10 100 4"/></svg></div>
+          <div class="kpi reveal"><small>Damaged or lost</small><b>—</b><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0 10L20 14 40 12 60 18 80 20 100 24"/></svg></div>
+          <div class="kpi reveal"><small>Washing &amp; replacement costs</small><b>—</b><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0 15L20 16 40 14 60 15 80 13 100 14"/></svg></div>
+          <div class="kpi reveal"><small>Fewer takeaway containers used</small><b>—</b><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0 26L20 24 40 18 60 14 80 8 100 4"/></svg></div>
+        </div>
+        <div class="survey reveal">Values fill in during the pilot. At the end, <b style="color:var(--ink)">canteen users, stall owners and staff</b> are surveyed to find concerns and areas for improvement.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section class="outcomes" id="outcomes">
+  <div class="wrap"><p class="tag">Expected outcomes</p></div>
+  <div class="marquee" id="mq1" style="margin-top:30px"><span>Less single-use packaging</span><span class="dot">●</span><span class="o">Reusables for everyone</span><span class="dot">●</span><span>Less single-use packaging</span><span class="dot">●</span><span class="o">Reusables for everyone</span><span class="dot">●</span></div>
+  <div class="marquee" id="mq2"><span class="o">Sustainable habits</span><span class="dot">●</span><span>Lower carbon footprint</span><span class="dot">●</span><span class="o">Sustainable habits</span><span class="dot">●</span><span>Lower carbon footprint</span><span class="dot">●</span></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><p><b style="color:var(--ink)">ReBox @ NTU</b> (working name) · CC0006 group project</p><p>Group members: to be added</p></div>
+    <div><p>Reference: Aggarwal (2024). Full citation to be added.</p><p>Map layout and machine data are illustrative.</p></div>
+  </div>
+</footer>
+
+<script src="../shared/campus-map.js"></script>
+<script>
+(function () {
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const sectionProgress = el => {
+    const r = el.getBoundingClientRect(), total = r.height - innerHeight;
+    return total <= 0 ? 0 : clamp(-r.top / total);
+  };
+
+  // Reveal + count-up
+  function countUp(el) {
+    const to = +el.dataset.count, dec = +(el.dataset.dec || 0), pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+    const t0 = performance.now();
+    const f = now => {
+      const t = clamp((now - t0) / 1400), e = 1 - Math.pow(1 - t, 4);
+      el.textContent = pre + (to * e).toFixed(dec) + suf;
+      if (t < 1) requestAnimationFrame(f);
+    };
+    requestAnimationFrame(f);
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('is-in');
+    if (e.target.dataset.count != null) countUp(e.target);
+    io.unobserve(e.target);
+  }), { threshold: 0.2 });
+  $$('.reveal, [data-count]').forEach(el => io.observe(el));
+
+  // Loop ring
+  const LOOP_LABELS = ['Borrow', 'Order', 'Return', 'Refund', 'Wash'];
+  const svg = $('#loop-svg'), C = 260, R = 190;
+  const pt = (deg, r) => [C + r * Math.cos(deg * Math.PI / 180), C + r * Math.sin(deg * Math.PI / 180)];
+  let s = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="rgba(236,244,238,.1)" stroke-width="2"/>`;
+  s += `<circle id="loop-arc" cx="${C}" cy="${C}" r="${R}" fill="none" stroke="#c6f24e" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 ${C} ${C})" style="filter:drop-shadow(0 0 6px rgba(198,242,78,.6))"/>`;
+  s += `<text x="${C}" y="${C - 6}" text-anchor="middle" style="font-family:var(--display);font-size:44px;font-weight:700;fill:#ecf4ee">$5</text><text x="${C}" y="${C + 24}" text-anchor="middle" style="font-size:14px;fill:#8a9d93">deposit, always refundable</text>`;
+  LOOP_LABELS.forEach((l, i) => {
+    const a = -90 + i * 72, [x, y] = pt(a, R), [lx, ly] = pt(a, R + 50);
+    s += `<g class="node"><circle cx="${x}" cy="${y}" r="24"/><text class="num" x="${x}" y="${y + 6}" text-anchor="middle" font-size="17">${i + 1}</text><text class="lbl" x="${lx}" y="${ly + 5}" text-anchor="middle" font-size="16">${l}</text></g>`;
+  });
+  s += `<g id="loop-dot"><circle r="22" fill="rgba(198,242,78,.2)"/><rect x="-12" y="-8" width="24" height="16" rx="4" fill="#c6f24e"/><rect x="-14" y="-12" width="28" height="6" rx="3" fill="#ecf4ee"/></g>`;
+  svg.innerHTML = s;
+  const nodes = $$('.node', svg), loopArc = $('#loop-arc'), loopDot = $('#loop-dot'), loopSteps = $$('.loop-step');
+
+  // Break-even chart
+  const chart = $('#chart');
+  const X = n => 50 + n / 120 * 570, Y = v => 280 - v / 16 * 260;
+  const reuse = n => 4.5 + 0.05 * n, dispo = n => 0.13 * n, BE = 4.5 / 0.08;
+  let g = '';
+  for (let v = 0; v <= 16; v += 4) g += `<line class="grid" x1="50" x2="620" y1="${Y(v)}" y2="${Y(v)}"/><text x="40" y="${Y(v) + 4}" text-anchor="end">$${v}</text>`;
+  for (let n = 0; n <= 120; n += 20) g += `<text x="${X(n)}" y="302" text-anchor="middle">${n}</text>`;
+  g += `<line id="l-d" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" x1="${X(0)}" y1="${Y(0)}" x2="${X(120)}" y2="${Y(dispo(120))}" stroke="#ff7a59" stroke-width="4" stroke-linecap="round"/>`;
+  g += `<line id="l-r" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" x1="${X(0)}" y1="${Y(reuse(0))}" x2="${X(120)}" y2="${Y(reuse(120))}" stroke="#c6f24e" stroke-width="4" stroke-linecap="round"/>`;
+  g += `<g id="be-mark" opacity="0"><circle cx="${X(BE)}" cy="${Y(reuse(BE))}" r="8" fill="#0a0f0d" stroke="#ecf4ee" stroke-width="3"/><text x="${X(BE) - 14}" y="${Y(reuse(BE)) - 16}" text-anchor="end" style="fill:#ecf4ee;font-weight:700;font-size:14px">Break-even ≈ 56 uses</text></g>`;
+  g += `<line id="vline" y1="20" y2="280" stroke="rgba(236,244,238,.4)" stroke-dasharray="4 4"/><circle id="p-d" r="6" fill="#ff7a59"/><circle id="p-r" r="6" fill="#c6f24e"/>`;
+  chart.innerHTML = g;
+  const range = $('#range');
+  function updateChart() {
+    const n = +range.value;
+    $('#r-n').textContent = n;
+    $('#r-r').textContent = '$' + reuse(n).toFixed(2);
+    $('#r-d').textContent = '$' + dispo(n).toFixed(2);
+    ['x1', 'x2'].forEach(k => $('#vline').setAttribute(k, X(n)));
+    $('#p-d').setAttribute('cx', X(n)); $('#p-d').setAttribute('cy', Y(dispo(n)));
+    $('#p-r').setAttribute('cx', X(n)); $('#p-r').setAttribute('cy', Y(reuse(n)));
+  }
+  range.addEventListener('input', updateChart);
+  updateChart();
+
+  // ---------- Demo: map + wallet ----------
+  const state = { loan: null, steps: [false, false, false, false, false] };
+  const logEl = $('#w-log');
+  let logEmpty = true;
+  const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  function log(html) {
+    if (logEmpty) { logEl.innerHTML = ''; logEmpty = false; }
+    const li = document.createElement('li');
+    li.innerHTML = `<time>${now()}</time><span>${html}</span>`;
+    logEl.prepend(li);
+  }
+  const map = CampusMap.create($('#phone-map'), {
+    compact: true,
+    extraActions: [{
+      primary: true,
+      label: c => state.loan ? 'Return here' : 'Borrow here · $5',
+      disabled: c => state.loan ? map.freeOf(c) <= 0 : c.stock <= 0,
+      run: c => state.loan ? doReturn(c) : doBorrow(c)
+    }]
+  });
+  function doBorrow(c) {
+    const id = 'RB-' + String(Math.floor(1000 + Math.random() * 9000));
+    state.loan = { id, from: c };
+    state.steps = [true, false, false, false, false];
+    map.adjust(c.id, -1);
+    map.refresh();
+    log(`Borrowed <b>${id}</b> at ${c.name} · <span class="minus">−$5.00 deposit held</span>`);
+    renderWallet();
+  }
+  function doReturn(c) {
+    const loan = state.loan;
+    state.loan = null;
+    state.steps[2] = state.steps[3] = true;
+    map.adjust(c.id, 1);
+    map.refresh();
+    log(`Returned <b>${loan.id}</b> at ${c.name}`);
+    log(`<span class="plus">+$5.00 deposit refunded</span>`);
+    renderWallet(`Returned at <b>${c.name}</b>. Your $5 is back. The container is off to be washed…`);
+    setTimeout(() => {
+      const low = map.all().filter(x => x.id !== c.id).sort((a, b) => a.stock / a.cap - b.stock / b.cap)[0];
+      if (map.adjust(c.id, -1)) map.adjust(low.id, 1);
+      state.steps[4] = true;
+      log(`<b>${loan.id}</b> washed and redistributed to ${low.name}`);
+      renderWallet(`Washed in a commercial dishwasher and sent to <b>${low.name}</b>, which was running low. Loop complete.`);
+    }, 2600);
+  }
+  function renderWallet(msg) {
+    const held = $('#w-held'), badge = $('#w-badge');
+    held.textContent = state.loan ? '$5.00' : '$0.00';
+    held.classList.toggle('held', !!state.loan);
+    badge.className = 'w-badge' + (state.loan ? ' active' : state.steps[3] ? ' done' : '');
+    badge.textContent = state.loan ? `${state.loan.id} · borrowed` : state.steps[3] ? 'Refunded' : 'No container';
+    $$('#w-steps li').forEach((li, i) => li.classList.toggle('done', state.steps[i]));
+    $('#w-hand').disabled = !state.loan || state.steps[1];
+    $('#w-msg').innerHTML = msg || (state.loan
+      ? (state.steps[1]
+        ? 'Enjoy your meal! When you are done, tap a canteen with space and press <b>Return here</b>.'
+        : `Container <b>${state.loan.id}</b> is yours. Hand it to the stall owner to pack your takeaway.`)
+      : 'Tap any canteen pin on the map, then press <b>Borrow here</b>.');
+  }
+  $('#w-hand').addEventListener('click', () => {
+    state.steps[1] = true;
+    log(`Handed <b>${state.loan.id}</b> to the stall. Takeaway packed.`);
+    renderWallet();
+  });
+  $('#w-near').addEventListener('click', () => map.nearest());
+  $('#w-reset').addEventListener('click', () => {
+    state.loan = null; state.steps = [false, false, false, false, false];
+    logEl.innerHTML = '<li><time>--:--</time><span class="muted">Nothing yet.</span></li>'; logEmpty = true;
+    map.deselect();
+    renderWallet();
+  });
+  renderWallet();
+  setInterval(() => { $('#clock').textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/i, ''); }, 1000);
+
+  // ---------- Scroll-driven ----------
+  const bigs = $$('.big'), ringBg = $('#ring-bg'), meter = $('#meter');
+  const hs = $('#problem'), track = $('#track');
+  const loop = $('#loop');
+  const numbersChart = $('.chart-wrap');
+  const mq1 = $('#mq1'), mq2 = $('#mq2'), outcomes = $('#outcomes');
+
+  function update() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    meter.style.height = (max > 0 ? scrollY / max * 100 : 0) + '%';
+
+    // Hero lines drift sideways
+    const y = Math.min(scrollY, innerHeight * 1.2);
+    bigs.forEach(b => { b.style.transform = `translateX(${y * +b.dataset.x}px)`; });
+    ringBg.style.transform = `translateY(-50%) rotate(${scrollY * 0.12}deg)`;
+
+    // Horizontal problem track
+    const hp = sectionProgress(hs);
+    const dist = Math.max(0, track.scrollWidth - innerWidth + 48);
+    track.style.transform = `translateX(${-hp * dist}px)`;
+
+    // Loop
+    const lp = sectionProgress(loop);
+    const idx = Math.min(4, Math.floor(lp * 5));
+    loopArc.setAttribute('stroke-dashoffset', 100 - lp * 100);
+    const [dx, dy] = pt(-90 + lp * 360, R);
+    loopDot.setAttribute('transform', `translate(${dx} ${dy})`);
+    nodes.forEach((n, i) => n.classList.toggle('on', i <= idx));
+    loopSteps.forEach((st, i) => st.classList.toggle('on', i === idx));
+
+    // Chart draws as it scrolls into view
+    const cr = numbersChart.getBoundingClientRect();
+    const cp = clamp((innerHeight - cr.top) / (innerHeight * 0.7));
+    $('#l-d').setAttribute('stroke-dashoffset', 1 - cp);
+    $('#l-r').setAttribute('stroke-dashoffset', 1 - cp);
+    $('#be-mark').setAttribute('opacity', cp > 0.6 ? 1 : 0);
+
+    // Outcome marquees move with scroll
+    const or = outcomes.getBoundingClientRect();
+    const off = (innerHeight - or.top) * 0.35;
+    mq1.style.transform = `translateX(${-off}px)`;
+    mq2.style.transform = `translateX(${off - 600}px)`;
+  }
+  let ticking = false;
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; update(); });
+  }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+</script>
+</body>
+</html>
