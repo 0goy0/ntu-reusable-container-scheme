@@ -40,7 +40,7 @@ function BreakEvenChart() {
         className={`be-chart${inView ? ' is-in' : ''}`}
         viewBox="0 0 640 312"
         role="img"
-        aria-label={`Cumulative cost chart. The reusable set becomes cheaper than disposables after about ${Math.round(BREAK_EVEN)} uses.`}
+        aria-label={`Cumulative cost chart. The reusable set becomes cheaper than disposables after about ${Math.ceil(BREAK_EVEN)} uses.`}
         onPointerMove={onMove}
       >
         {[0, 4, 8, 12, 16].map(v => (
@@ -56,7 +56,7 @@ function BreakEvenChart() {
         <line className="line" pathLength="1" x1={X(0)} y1={Y(reuse(0))} x2={X(MAX_N)} y2={Y(reuse(MAX_N))} stroke={REUSE_C} />
         {/* break-even marker with surface ring */}
         <circle cx={beX} cy={beY} r="7" fill="#fffdf7" stroke="#13241c" strokeWidth="2.5" />
-        <text x={beX - 14} y={beY - 16} textAnchor="end" className="axis-label">Break-even ≈ {Math.round(BREAK_EVEN)} uses</text>
+        <text x={beX - 14} y={beY - 16} textAnchor="end" className="axis-label">Break-even ≈ {Math.ceil(BREAK_EVEN)} uses</text>
         {/* crosshair */}
         <line x1={X(n)} x2={X(n)} y1={TOP} y2={BOT} stroke="#13241c" strokeOpacity=".35" strokeWidth="1" />
         <circle cx={X(n)} cy={Y(d)} r="5" fill={DISPO_C} stroke="#fffdf7" strokeWidth="2" />
@@ -77,7 +77,7 @@ function BreakEvenChart() {
       <table className="sr-only">
         <caption>Cumulative cost by number of uses</caption>
         <thead><tr><th>Uses</th><th>Reusable</th><th>Disposable</th></tr></thead>
-        <tbody>{[1, 20, 40, 56, 60, 80, 100, 120].map(k => <tr key={k}><td>{k}</td><td>{money(reuse(k))}</td><td>{money(dispo(k))}</td></tr>)}</tbody>
+        <tbody>{[1, 20, 40, 57, 60, 80, 100, 120].map(k => <tr key={k}><td>{k}</td><td>{money(reuse(k))}</td><td>{money(dispo(k))}</td></tr>)}</tbody>
       </table>
     </>
   );
@@ -104,7 +104,7 @@ export default function Feasibility() {
         <SectionHead
           index="05"
           kicker="The economics"
-          title={`Pays for itself in about ${Math.round(BREAK_EVEN)} uses.`}
+          title={`Pays for itself in about ${Math.ceil(BREAK_EVEN)} uses.`}
           lead={`One reusable set costs ${money(SET_COST)} upfront and ${money(COSTS.wash)} per wash. A disposable set costs ${money(COSTS.disposable)} every single time.`}
         />
         <div className="costs">
@@ -122,7 +122,7 @@ export default function Feasibility() {
           <div className="side-stats">
             <ImpactRing />
             <Reveal className="mini"><CountUp to={COSTS.disposable} dec={2} prefix="$" /><span>per disposable takeaway set</span></Reveal>
-            <Reveal className="mini"><CountUp to={Math.round(BREAK_EVEN)} prefix="≈" /><span>uses for a reusable set to break even</span></Reveal>
+            <Reveal className="mini"><CountUp to={Math.ceil(BREAK_EVEN)} prefix="≈" /><span>uses for a reusable set to break even</span></Reveal>
           </div>
         </div>
         <Reveal as="p" className="caveat">

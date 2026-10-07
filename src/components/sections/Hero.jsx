@@ -5,7 +5,7 @@ import { BREAK_EVEN, DEPOSIT, HERO, SET_COST } from '../../data/content';
 
 const STATS = [
   [`$${SET_COST.toFixed(2)}`, 'per reusable set, washable for many uses'],
-  [`≈${Math.round(BREAK_EVEN)} uses`, 'to beat single-use packaging on cost'],
+  [`≈${Math.ceil(BREAK_EVEN)} uses`, 'to beat single-use packaging on cost'],
   ['59%', 'lower climate impact after 20 uses*']
 ];
 

@@ -1,10 +1,10 @@
 // All proposal text and figures in one place: edit wording here, not in the components.
-// Source: CC0006 Abstract & Proposal.pdf. The $5 deposit is a group decision.
+// Source: CC0006 Abstract & Proposal.pdf. The $3 deposit is a group decision.
 // Items marked [DRAFTED] are NOT in the proposal. The AI drafted them for the pitch; review before presenting.
 
 export const TITLE = 'NTU Reusable Container Scheme';
 export const SHORT_TITLE = 'Reusable Container Scheme';
-export const DEPOSIT = 5;
+export const DEPOSIT = 3;
 
 export const HERO = {
   kicker: 'CC0006 · A proposal for NTU canteens',
@@ -20,7 +20,7 @@ export const BREAK_EVEN = SET_COST / (COSTS.disposable - COSTS.wash);     // ≈
 export const GLANCE = [
   { icon: 'trash', label: 'The problem', text: 'Takeaway meals create large amounts of single-use packaging, and BYOC only works for students who remember their container.' },
   { icon: 'repeat', label: 'The solution', text: `Borrow a durable container and stainless-steel utensils for a $${DEPOSIT} refundable deposit, and return them at any participating canteen.` },
-  { icon: 'coins', label: 'The economics', text: `$${SET_COST.toFixed(2)} per reusable set. It beats $${COSTS.disposable.toFixed(2)} disposables after about ${Math.round(BREAK_EVEN)} uses, including washing.` },
+  { icon: 'coins', label: 'The economics', text: `$${SET_COST.toFixed(2)} per reusable set. It beats $${COSTS.disposable.toFixed(2)} disposables after about ${Math.ceil(BREAK_EVEN)} uses, including washing.` },
   { icon: 'leaf', label: 'The impact', text: '59% lower climate-change impact after 20 uses, compared with single-use packaging (Aggarwal, 2024).' }
 ];
 export const ASK = 'We are asking for approval to run a pilot at participating canteens, measured against clear KPIs.';
@@ -42,7 +42,7 @@ export const STEPS = [
 // Limitations come from the proposal. Each `mitigation` is [DRAFTED].
 export const RISKS = [
   { icon: 'wallet', title: 'High initial cost', text: 'Upfront investment in reusable containers and utensils.',
-    mitigation: `Start with a small pilot. The $${DEPOSIT} deposit exceeds the $${SET_COST.toFixed(2)} cost of a set, so an unreturned set is already paid for.` },
+    mitigation: `Start with a small pilot. The $${DEPOSIT} deposit recovers most of the $${SET_COST.toFixed(2)} set cost, so the loss on any unreturned set is small.` },
   { icon: 'undo', title: 'Low return rates', text: 'Unreturned containers raise replacement costs and reduce the environmental benefit.',
     mitigation: 'The deposit is a direct incentive to return, OmniBus points to the nearest machine with space, and the return rate is tracked as a pilot KPI.' },
   { icon: 'droplets', title: 'More washing', text: 'Additional water, electricity and possibly manpower.',
@@ -78,7 +78,7 @@ export const OUTCOMES = [
 
 // Fill in your names here; they appear in the footer.
 // Each name must be in quotes, separated by commas, e.g. ['Nicholas', 'Alex Tan', 'Priya'].
-export const GROUP_MEMBERS = ['Nicholas', 'Test', 'Test2', 'Test3', 'Test4', 'Test5'];
+export const GROUP_MEMBERS = ['Nicholas', 'Vanessa', 'Joelle', 'Xin Hui', 'Ean Yue', 'Brennen'];
 
 // APA 7th edition.
 export const REFERENCES = [
