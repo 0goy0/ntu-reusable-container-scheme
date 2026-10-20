@@ -1,10 +1,10 @@
 // All proposal text and figures in one place: edit wording here, not in the components.
-// Source: CC0006 Abstract & Proposal.pdf. The $3 deposit is a group decision.
+// Source: CC0006 Abstract & Proposal.pdf. The $5 deposit is a group decision.
 // Items marked [DRAFTED] are NOT in the proposal. The AI drafted them for the pitch; review before presenting.
 
 export const TITLE = 'NTU Reusable Container Scheme';
 export const SHORT_TITLE = 'Reusable Container Scheme';
-export const DEPOSIT = 3;
+export const DEPOSIT = 5;
 
 export const HERO = {
   kicker: 'CC0006 · A proposal for NTU canteens',
@@ -42,7 +42,7 @@ export const STEPS = [
 // Limitations come from the proposal. Each `mitigation` is [DRAFTED].
 export const RISKS = [
   { icon: 'wallet', title: 'High initial cost', text: 'Upfront investment in reusable containers and utensils.',
-    mitigation: `Start with a small pilot. The $${DEPOSIT} deposit recovers most of the $${SET_COST.toFixed(2)} set cost, so the loss on any unreturned set is small.` },
+    mitigation: `Start with a small pilot. The $${DEPOSIT} deposit exceeds the $${SET_COST.toFixed(2)} cost of a set, so an unreturned set is already paid for.` },
   { icon: 'undo', title: 'Low return rates', text: 'Unreturned containers raise replacement costs and reduce the environmental benefit.',
     mitigation: 'The deposit is a direct incentive to return, OmniBus points to the nearest machine with space, and the return rate is tracked as a pilot KPI.' },
   { icon: 'droplets', title: 'More washing', text: 'Additional water, electricity and possibly manpower.',
